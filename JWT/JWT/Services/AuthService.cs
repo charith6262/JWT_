@@ -37,7 +37,11 @@ namespace JWT.Services
             }
             //Adding new user in the Database
 
+            user.Password = PasswordHelper.HashPassword(user.Password);
             user.ConfirmPassword = user.Password;
+
+            //user.Password = user.ConfirmPassword;
+           // user.ConfirmPassword = user.Password;
             await _context.Users.AddAsync(user);
             await _context.SaveChangesAsync();
             return "User registered successfully";
@@ -49,10 +53,18 @@ namespace JWT.Services
         {
             var user = await _context.Users.FirstOrDefaultAsync(u => u.UserName == loginDTO.UserName);
 
-            if (user == null || user.Password != loginDTO.Password)
+            if (user == null)
+
             {
+
                 return null;
             }
+            bool ispasswordvalid = PasswordHelper.verfiedPassword(loginDTO.Password, user.Password);
+            if (!ispasswordvalid)
+                return null;
+
+
+
             return GenerateJWTToken(user);
         }
 

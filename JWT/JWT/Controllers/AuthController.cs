@@ -28,10 +28,11 @@ namespace JWT.Controllers
             return Ok(new { message = userResult });
         }
 
+        [HttpPost("Login")]
         public async Task<IActionResult> Login(LoginDTO loginDTO)
         {
             var token = await _authService.Login(loginDTO);
-            if (token != null)
+            if (token == null)
             {
                 return Unauthorized(new { message = "InvalidCredentials" });
             }
